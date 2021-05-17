@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 quartz = { path = "../quartz" }
+noise = "0.7.0"
