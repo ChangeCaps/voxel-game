@@ -97,6 +97,15 @@ Hit trace(in vec3 ro, in vec3 rd) {
     return hit;
 }
 
+vec3 sky(in vec3 rd) {
+    float sky = max(rd.y * 0.5 + 0.5, 0.0);
+
+    vec3 color = vec3(0.5, 0.8, 0.9) - sky * 0.5;
+    color = mix(color, vec3(0.5, 0.7, 0.9), exp(-10.0 * sky));
+
+    return color;
+}
+
 void main() {
     mat4 inverse_view = inverse(view_proj);
     vec4 near = inverse_view * ray;
@@ -131,10 +140,7 @@ void main() {
     if (hit.data.a > 0.0) {
         color *= light;
     } else {
-        float sky = max(rd.y * 0.5 + 0.5, 0.0);
-
-        color = vec3(0.5, 0.8, 0.9) - sky * 0.5;
-        color = mix(color, vec3(0.5, 0.7, 0.9), exp(-10.0 * sky));
+        color = sky(rd);
     }
 
     out_color = vec4(color, 1.0);
