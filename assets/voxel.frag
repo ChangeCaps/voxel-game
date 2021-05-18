@@ -12,7 +12,7 @@ layout(set = 0, binding = 1) uniform CameraPosition {
     vec3 cam_position;
 };
 
-layout(set = 1, binding = 0) uniform texture3D voxel_texture;
+layout(set = 1, binding = 0) uniform texture2DArray voxel_texture;
 layout(set = 1, binding = 1) uniform sampler voxel_sampler;
 
 const int MAX_STEPS = 512;
@@ -36,7 +36,7 @@ vec2 intersect_box(in vec3 ro, in vec3 rd, in vec3 b_min, in vec3 b_max) {
 }
 
 bool in_bounds(in vec3 pos) {
-    ivec3 dimensions = textureSize(sampler3D(voxel_texture, voxel_sampler), 0);
+    ivec3 dimensions = textureSize(sampler2DArray(voxel_texture, voxel_sampler), 0);
 
     return all(greaterThan(pos, vec3(0.0))) && all(lessThan(pos, vec3(dimensions)));
 }
@@ -45,7 +45,7 @@ Hit trace(in vec3 ro, in vec3 rd) {
     Hit hit;
     hit.data = vec4(0.0);
 
-    ivec3 texture_size = textureSize(sampler3D(voxel_texture, voxel_sampler), 0);
+    ivec3 texture_size = textureSize(sampler2DArray(voxel_texture, voxel_sampler), 0);
 
     vec3 lookup = ro;
 
@@ -64,7 +64,7 @@ Hit trace(in vec3 ro, in vec3 rd) {
 
     for (int i = 0; i < MAX_STEPS; i++) {
         hit.pos = lookup;
-        hit.data = texelFetch(sampler3D(voxel_texture, voxel_sampler), cell, 0);
+        hit.data = texelFetch(sampler2DArray(voxel_texture, voxel_sampler), cell, 0);
 
         if (hit.data.a > 0.0 || !in_bounds(lookup)) {
             return hit;
